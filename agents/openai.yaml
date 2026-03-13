@@ -1,0 +1,4 @@
+interface:
+  display_name: "gstack"
+  short_description: "Fast browser automation for Codex"
+  default_prompt: "Use $gstack to inspect this site in a real browser."

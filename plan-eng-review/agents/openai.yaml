@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plan Eng Review"
+  short_description: "Review architecture, tests, and delivery risk"
+  default_prompt: "Use $plan-eng-review to review this technical plan before coding."

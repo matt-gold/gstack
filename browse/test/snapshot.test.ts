@@ -12,13 +12,13 @@ import { handleReadCommand } from '../src/read-commands';
 import { handleWriteCommand } from '../src/write-commands';
 import { handleMetaCommand } from '../src/meta-commands';
 
-let testServer: ReturnType<typeof startTestServer>;
+let testServer: Awaited<ReturnType<typeof startTestServer>>;
 let bm: BrowserManager;
 let baseUrl: string;
 const shutdown = async () => {};
 
 beforeAll(async () => {
-  testServer = startTestServer(0);
+  testServer = await startTestServer(0);
   baseUrl = testServer.url;
 
   bm = new BrowserManager();

@@ -17,12 +17,12 @@ import * as fs from 'fs';
 import { spawn } from 'child_process';
 import * as path from 'path';
 
-let testServer: ReturnType<typeof startTestServer>;
+let testServer: Awaited<ReturnType<typeof startTestServer>>;
 let bm: BrowserManager;
 let baseUrl: string;
 
 beforeAll(async () => {
-  testServer = startTestServer(0);
+  testServer = await startTestServer(0);
   baseUrl = testServer.url;
 
   bm = new BrowserManager();
@@ -426,8 +426,8 @@ describe('Status', () => {
 describe('CLI server script resolution', () => {
   test('prefers adjacent browse/src/server.ts for compiled project installs', () => {
     const root = fs.mkdtempSync('/tmp/gstack-cli-');
-    const execPath = path.join(root, '.claude/skills/gstack/browse/dist/browse');
-    const serverPath = path.join(root, '.claude/skills/gstack/browse/src/server.ts');
+    const execPath = path.join(root, '.codex/skills/gstack/browse/dist/browse');
+    const serverPath = path.join(root, '.codex/skills/gstack/browse/src/server.ts');
 
     fs.mkdirSync(path.dirname(execPath), { recursive: true });
     fs.mkdirSync(path.dirname(serverPath), { recursive: true });

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pre-Landing Review"
+  short_description: "Review diffs for structural merge risk"
+  default_prompt: "Use $review to inspect this branch for structural issues."

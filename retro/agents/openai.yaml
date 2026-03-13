@@ -1,0 +1,4 @@
+interface:
+  display_name: "Retro"
+  short_description: "Turn git history into an engineering retro"
+  default_prompt: "Use $retro to generate an engineering retrospective for this repo."

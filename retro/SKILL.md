@@ -1,30 +1,24 @@
 ---
 name: retro
-version: 1.0.0
 description: |
-  Weekly engineering retrospective. Analyzes commit history, work patterns,
-  and code quality metrics with persistent history and trend tracking.
-allowed-tools:
-  - Bash
-  - Read
-  - Write
-  - Glob
+  Weekly engineering retrospective. Analyze commit history, work patterns, and
+  code quality metrics with persistent history and trend tracking.
 ---
 
-# /retro — Weekly Engineering Retrospective
+# $retro — Weekly Engineering Retrospective
 
-Generates a comprehensive engineering retrospective analyzing commit history, work patterns, and code quality metrics. Designed for a senior IC/CTO-level builder using Claude Code as a force multiplier.
+Generates a comprehensive engineering retrospective analyzing commit history, work patterns, and code quality metrics. Designed for a senior IC/CTO-level builder using Codex as a force multiplier.
 
 ## User-invocable
-When the user types `/retro`, run this skill.
+Run this skill when the user explicitly invokes `$retro` or asks for an engineering retrospective.
 
 ## Arguments
-- `/retro` — default: last 7 days
-- `/retro 24h` — last 24 hours
-- `/retro 14d` — last 14 days
-- `/retro 30d` — last 30 days
-- `/retro compare` — compare current window vs prior same-length window
-- `/retro compare 14d` — compare with explicit window
+- `$retro` — default: last 7 days
+- `$retro 24h` — last 24 hours
+- `$retro 14d` — last 14 days
+- `$retro 30d` — last 30 days
+- `$retro compare` — compare current window vs prior same-length window
+- `$retro compare 14d` — compare with explicit window
 
 ## Instructions
 
@@ -32,13 +26,13 @@ Parse the argument to determine the time window. Default to 7 days if no argumen
 
 **Argument validation:** If the argument doesn't match a number followed by `d`, `h`, or `w`, the word `compare`, or `compare` followed by a number and `d`/`h`/`w`, show this usage and stop:
 ```
-Usage: /retro [window]
-  /retro              — last 7 days (default)
-  /retro 24h          — last 24 hours
-  /retro 14d          — last 14 days
-  /retro 30d          — last 30 days
-  /retro compare      — compare this period vs prior period
-  /retro compare 14d  — compare with explicit window
+Usage: $retro [window]
+  $retro              — last 7 days (default)
+  $retro 24h          — last 24 hours
+  $retro 14d          — last 14 days
+  $retro 30d          — last 30 days
+  $retro compare      — compare this period vs prior period
+  $retro compare 14d  — compare with explicit window
 ```
 
 ### Step 1: Gather Raw Data
@@ -310,7 +304,7 @@ Small, practical, realistic for a very busy person. Each must be something that 
 
 ## Compare Mode
 
-When the user runs `/retro compare` (or `/retro compare 14d`):
+When the user runs `$retro compare` (or `$retro compare 14d`):
 
 1. Compute metrics for the current window (default 7d) using `--since="7 days ago"`
 2. Compute metrics for the immediately prior same-length window using both `--since` and `--until` to avoid overlap (e.g., `--since="14 days ago" --until="7 days ago"` for a 7d window)
@@ -336,5 +330,5 @@ When the user runs `/retro compare` (or `/retro compare 14d`):
 - If the window has zero commits, say so and suggest a different window
 - Round LOC/hour to nearest 50
 - Treat merge commits as PR boundaries
-- Do not read CLAUDE.md or other docs — this skill is self-contained
+- Do not read `AGENTS.md` or other docs — this skill is self-contained
 - On first run (no prior retros), skip comparison sections gracefully

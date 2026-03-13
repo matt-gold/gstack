@@ -5,12 +5,38 @@
 
 import * as path from 'path';
 import * as fs from 'fs';
+import * as net from 'net';
 
 const FIXTURES_DIR = path.resolve(import.meta.dir, 'fixtures');
 
-export function startTestServer(port: number = 0): { server: ReturnType<typeof Bun.serve>; url: string } {
+function findAvailablePort(): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const server = net.createServer();
+
+    server.once('error', reject);
+    server.listen(0, '127.0.0.1', () => {
+      const address = server.address();
+      if (!address || typeof address === 'string') {
+        server.close(() => reject(new Error('Failed to allocate test port')));
+        return;
+      }
+
+      const { port } = address;
+      server.close((err) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+        resolve(port);
+      });
+    });
+  });
+}
+
+export async function startTestServer(port: number = 0): Promise<{ server: ReturnType<typeof Bun.serve>; url: string }> {
+  const resolvedPort = port === 0 ? await findAvailablePort() : port;
   const server = Bun.serve({
-    port,
+    port: resolvedPort,
     hostname: '127.0.0.1',
     fetch(req) {
       const url = new URL(req.url);
@@ -40,7 +66,7 @@ export function startTestServer(port: number = 0): { server: ReturnType<typeof B
 
 // If run directly, start and print URL
 if (import.meta.main) {
-  const { server, url } = startTestServer(9450);
+  const { server, url } = await startTestServer(9450);
   console.log(`Test server running at ${url}`);
   console.log(`Fixtures: ${FIXTURES_DIR}`);
   console.log('Press Ctrl+C to stop');

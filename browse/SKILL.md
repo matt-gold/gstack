@@ -2,21 +2,19 @@
 name: browse
 version: 1.0.0
 description: |
-  Fast web browsing for Claude Code via persistent headless Chromium daemon. Navigate to any URL,
+  Fast web browsing for Codex via persistent headless Chromium daemon. Navigate to any URL,
   read page content, click elements, fill forms, run JavaScript, take screenshots,
   inspect CSS/DOM, capture console/network logs, and more. ~100ms per command after
   first call. Use when you need to check a website, verify a deployment, read docs,
   or interact with any web page. No MCP, no Chrome extension — just fast CLI.
-allowed-tools:
-  - Bash
-  - Read
-
 ---
 
-# gstack: Persistent Browser for Claude Code
+# gstack: Persistent Browser for Codex
 
 Persistent headless Chromium daemon. First call auto-starts the server (~3s).
 Every subsequent call: ~100-200ms. Auto-shuts down after 30 min idle.
+
+Run this skill when the user explicitly invokes `$browse` or asks to inspect, test, or interact with a website in a real browser.
 
 ## SETUP (run this check BEFORE any browse command)
 
@@ -24,9 +22,9 @@ Before using any browse command, find the skill and check if the binary exists:
 
 ```bash
 # Check project-level first, then user-level
-if test -x .claude/skills/gstack/browse/dist/browse; then
+if test -x .codex/skills/gstack/browse/dist/browse; then
   echo "READY_PROJECT"
-elif test -x ~/.claude/skills/gstack/browse/dist/browse; then
+elif test -x ~/.codex/skills/gstack/browse/dist/browse; then
   echo "READY_USER"
 else
   echo "NEEDS_SETUP"
@@ -37,7 +35,7 @@ Set `B` to whichever path is READY and use it for all commands. Prefer project-l
 
 If `NEEDS_SETUP`:
 1. Tell the user: "gstack browse needs a one-time build (~10 seconds). OK to proceed?" Then STOP and wait for their response.
-2. If they approve, determine the skill directory (project-level `.claude/skills/gstack` or user-level `~/.claude/skills/gstack`) and run:
+2. If they approve, determine the skill directory (project-level `.codex/skills/gstack` or user-level `~/.codex/skills/gstack`) and run:
 ```bash
 cd <SKILL_DIR> && ./setup
 ```
@@ -48,15 +46,15 @@ Once setup is done, it never needs to run again (the compiled binary persists).
 
 ## IMPORTANT
 
-- Use the compiled binary via Bash: `.claude/skills/gstack/browse/dist/browse` (project) or `~/.claude/skills/gstack/browse/dist/browse` (user).
-- NEVER use `mcp__claude-in-chrome__*` tools. They are slow and unreliable.
+- Use the compiled binary from the terminal: `.codex/skills/gstack/browse/dist/browse` (project) or `~/.codex/skills/gstack/browse/dist/browse` (user).
+- Prefer this CLI over browser MCP tools when it is available. It is faster and avoids protocol overhead.
 - The browser persists between calls — cookies, tabs, and state carry over.
 - The server auto-starts on first command. No setup needed.
 
 ## Quick Reference
 
 ```bash
-B=~/.claude/skills/gstack/browse/dist/browse
+B=~/.codex/skills/gstack/browse/dist/browse
 
 # Navigate to a page
 $B goto https://example.com

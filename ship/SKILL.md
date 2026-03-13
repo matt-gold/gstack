@@ -1,21 +1,13 @@
 ---
 name: ship
-version: 1.0.0
 description: |
-  Ship workflow: merge main, run tests, review diff, bump VERSION, update CHANGELOG, commit, push, create PR.
-allowed-tools:
-  - Bash
-  - Read
-  - Write
-  - Edit
-  - Grep
-  - Glob
-  - AskUserQuestion
+  Ship workflow: merge main, run tests, review diff, bump VERSION, update
+  CHANGELOG, commit, push, and create a PR with minimal back-and-forth.
 ---
 
 # Ship: Fully Automated Ship Workflow
 
-You are running the `/ship` workflow. This is a **non-interactive, fully automated** workflow. Do NOT ask for confirmation at any step. The user said `/ship` which means DO IT. Run straight through and output the PR URL at the end.
+You are running the `$ship` workflow. This is a **non-interactive, fully automated** workflow. Do not ask for confirmation at any step unless the instructions below explicitly require it. The user invoked `$ship`, so run straight through and output the PR URL at the end.
 
 **Only stop for:**
 - On `main` branch (abort)
@@ -89,7 +81,7 @@ Evals are mandatory when prompt-related files change. Skip this step entirely if
 git diff origin/main --name-only
 ```
 
-Match against these patterns (from CLAUDE.md):
+Match against these patterns (from `AGENTS.md`):
 - `app/services/*_prompt_builder.rb`
 - `app/services/*_generation_service.rb`, `*_writer_service.rb`, `*_designer_service.rb`
 - `app/services/*_evaluator.rb`, `*_scorer.rb`, `*_classifier_service.rb`, `*_analyzer.rb`
@@ -117,7 +109,7 @@ Map runner → test file: `post_generation_eval_runner.rb` → `post_generation_
 
 **3. Run affected suites at `EVAL_JUDGE_TIER=full`:**
 
-`/ship` is a pre-merge gate, so always use full tier (Sonnet structural + Opus persona judges).
+`$ship` is a pre-merge gate, so always use full tier (Sonnet structural + Opus persona judges).
 
 ```bash
 EVAL_JUDGE_TIER=full EVAL_VERBOSE=1 bin/test-lane --eval test/evals/<suite>_eval_test.rb 2>&1 | tee /tmp/ship_evals.txt
@@ -132,12 +124,12 @@ If multiple suites need to run, run them sequentially (each needs a test lane). 
 
 **5. Save eval output** — include eval results and cost dashboard in the PR body (Step 8).
 
-**Tier reference (for context — /ship always uses `full`):**
+**Tier reference (for context — `$ship` always uses `full`):**
 | Tier | When | Speed (cached) | Cost |
 |------|------|----------------|------|
 | `fast` (Haiku) | Dev iteration, smoke tests | ~5s (14x faster) | ~$0.07/run |
 | `standard` (Sonnet) | Default dev, `bin/test-lane --eval` | ~17s (4x faster) | ~$0.37/run |
-| `full` (Opus persona) | **`/ship` and pre-merge** | ~72s (baseline) | ~$1.27/run |
+| `full` (Opus persona) | **`$ship` and pre-merge** | ~72s (baseline) | ~$1.27/run |
 
 ---
 
@@ -145,7 +137,7 @@ If multiple suites need to run, run them sequentially (each needs a test lane). 
 
 Review the diff for structural issues that tests don't catch.
 
-1. Read `.claude/skills/review/checklist.md`. If the file cannot be read, **STOP** and report the error.
+1. Read the review checklist from `.codex/skills/review/checklist.md` if it exists, otherwise from `~/.codex/skills/gstack/review/checklist.md`. If neither file can be read, **STOP** and report the error.
 
 2. Run `git diff origin/main` to get the full diff (scoped to feature changes against the freshly-fetched remote main).
 
@@ -157,11 +149,11 @@ Review the diff for structural issues that tests don't catch.
 
 5. Output a summary header: `Pre-Landing Review: N issues (X critical, Y informational)`
 
-6. **If CRITICAL issues found:** For EACH critical issue, use a separate AskUserQuestion with:
+6. **If CRITICAL issues found:** For each critical issue, ask the user directly in chat with:
    - The problem (`file:line` + description)
    - Your recommended fix
    - Options: A) Fix it now (recommend), B) Acknowledge and ship anyway, C) It's a false positive — skip
-   After resolving all critical issues: if the user chose A (fix) on any issue, apply the recommended fixes, then commit only the fixed files by name (`git add <fixed-files> && git commit -m "fix: apply pre-landing review fixes"`), then **STOP** and tell the user to run `/ship` again to re-test with the fixes applied. If the user chose only B (acknowledge) or C (false positive) on all issues, continue with Step 4.
+   After resolving all critical issues: if the user chose A (fix) on any issue, apply the recommended fixes, then commit only the fixed files by name (`git add <fixed-files> && git commit -m "fix: apply pre-landing review fixes"`), then **STOP** and tell the user to run `$ship` again to re-test with the fixes applied. If the user chose only B (acknowledge) or C (false positive) on all issues, continue with Step 4.
 
 7. **If only non-critical issues found:** Output them and continue. They will be included in the PR body at Step 8.
 
@@ -243,7 +235,7 @@ Save the review output — it goes into the PR body in Step 8.
 git commit -m "$(cat <<'EOF'
 chore: bump version and changelog (vX.Y.Z.W)
 
-Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+Co-Authored-By: OpenAI Codex <codex@openai.com>
 EOF
 )"
 ```
@@ -279,7 +271,7 @@ gh pr create --title "<type>: <summary>" --body "$(cat <<'EOF'
 - [x] All Rails tests pass (N runs, 0 failures)
 - [x] All Vitest tests pass (N tests)
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
+🤖 Generated with [Codex](https://developers.openai.com/codex/)
 EOF
 )"
 ```
@@ -293,8 +285,8 @@ EOF
 - **Never skip tests.** If tests fail, stop.
 - **Never skip the pre-landing review.** If checklist.md is unreadable, stop.
 - **Never force push.** Use regular `git push` only.
-- **Never ask for confirmation** except for MINOR/MAJOR version bumps and CRITICAL review findings (one AskUserQuestion per critical issue with fix recommendation).
+- **Never ask for confirmation** except for MINOR/MAJOR version bumps and CRITICAL review findings (one direct chat question per critical issue with fix recommendation).
 - **Always use the 4-digit version format** from the VERSION file.
 - **Date format in CHANGELOG:** `YYYY-MM-DD`
 - **Split commits for bisectability** — each commit = one logical change.
-- **The goal is: user says `/ship`, next thing they see is the review + PR URL.**
+- **The goal is: user invokes `$ship`, next thing they see is the review + PR URL.**

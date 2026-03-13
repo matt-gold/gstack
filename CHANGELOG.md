@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.3 — 2026-03-13
+
+- Forked from the original Claude Code version of `gstack` and now maintained as a Codex-native variant with original git history preserved
+- Port skill docs and invocation patterns to Codex conventions (`AGENTS.md`, `.codex/skills`, `$skill-name`)
+- Add Codex skill metadata and update browser/install paths for Codex-based workflows
+
 ## 0.0.2 — 2026-03-12
 
 - Fix project-local `/browse` installs — compiled binary now resolves `server.ts` from its own directory instead of assuming a global install exists

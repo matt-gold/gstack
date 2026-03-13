@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ship"
+  short_description: "Run the full merge, test, and PR flow"
+  default_prompt: "Use $ship to merge main, run tests, and open a PR."
